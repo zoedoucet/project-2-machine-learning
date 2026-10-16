@@ -42,3 +42,48 @@ def compare_models(models, X, y, cv, scoring):
 def plot_errors(y_true, y_pred):
     """Show where the model goes wrong: a confusion matrix or the residuals."""
     pass
+
+
+def convert_binary_columns(df, column_groups):
+    """Converts a group a binary columns in one categorical column
+         Input:
+        - df: pandas dataframe
+        - column_groups: dictionnary where each key is the name of a categorical column
+                            and each values is a list of the binary columns categrories
+                            
+        Returns: a new pandas dataframe with the new categorical columns
+                     the binary columns are removed
+            
+        Note: This function assumes that each binary column name ends with a
+                    numeric category identifier, which is extracted to represent the
+                    corresponding categorical class."""
+    
+    for new_column, binary_columns in column_groups.items():
+
+        # Identifing the active category
+        df[new_column] = (
+            df[binary_columns]
+            .idxmax(axis=1)
+            .str.extract(r"(\d+)$")[0]
+            .astype(int))
+
+        # Remove the original binary columns
+        df.drop(columns=binary_columns, inplace=True)
+
+    return df
+
+
+def column_names_std(df):
+    """Standardises column names using snake_case
+        - removing leading and trailing spces
+        - setting everything to lower case
+        - replacing every character that is not a letter or a number with an underscore
+        Input: the dataframe
+        Output: dataframe with standardised column names"""
+    df = df.copy()
+    df.columns = (df.columns
+        .str.strip()# removing spaces
+        .str.lower()# everything in lower case
+        .str.replace(r"[^a-z0-9]+", "_", regex=True)# replacing every character that is not a letter or a number with an underscore 
+        )
+    return df
