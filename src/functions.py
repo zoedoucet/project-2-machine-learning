@@ -131,3 +131,21 @@ def cross_validation (model, X_train, y_train, folds):
     spread = {metric: round(cross_val[f"test_{metric}"].std(), 3) for metric in scoring}
     print(f"Scores: {scores} \n Spread: {spread}")
     return scores, spread
+
+
+def compare_models(models):
+    """Create a comparison table of model scores and fold spreads.
+    Input:
+    - models: models as dictionnary with score and spread as input
+    Output:
+    - comparison DataFrame """
+    import pandas as pd
+    rows = []
+    for name, (scores, spread) in models.items():
+        row = {"Model": name}
+
+        for metric in scores:
+            row[metric] = scores[metric]
+            row[f"{metric}_spread"] = spread[metric]
+        rows.append(row)
+    return pd.DataFrame(rows)
