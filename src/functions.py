@@ -87,3 +87,26 @@ def column_names_std(df):
         .str.replace(r"[^a-z0-9]+", "_", regex=True)# replacing every character that is not a letter or a number with an underscore 
         )
     return df
+
+
+def split (features, target, size, random_state,n_splits ):
+    """Splits the data into training and test sets using stratification on the target variable. 
+        Ensures reproducible splits and allows the same cross-validation folds to be reused across different notebooks.
+     Input: 
+      - features: the input features (X)
+      - target: the target variable (y)
+      - size: the proportion of data reserved for the test set
+      - random_state: the random seed chosen to ensure reproducibility
+      - n_spits: the number of folds used for cross validation
+     Output:
+      - prints the number of rows in the training and testing data
+      - returns X, y, X_train, X_test, y_train, y_test, cv, folds """
+    from sklearn.model_selection import train_test_split
+    from sklearn.model_selection import StratifiedKFold
+    X = features
+    y = target
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size= size, stratify= y, random_state= random_state)
+    cv = StratifiedKFold(n_splits= n_splits, shuffle=True, random_state= random_state)
+    folds = list(cv.split(X_train, y_train))
+    print(len(X_train), "training rows,", len(X_test), "test rows")
+    return X, y, X_train, X_test, y_train, y_test, cv, folds
