@@ -110,3 +110,24 @@ def split (features, target, size, random_state,n_splits ):
     folds = list(cv.split(X_train, y_train))
     print(len(X_train), "training rows,", len(X_test), "test rows")
     return X, y, X_train, X_test, y_train, y_test, cv, folds
+
+
+def cross_validation (model, X_train, y_train, folds):
+    """ Cross validation of a model with a multiclass target. Calculates the mean perfomance across folds of the follwoinf scores:
+        F1, recall, accuracy and precision. Also calculates and returns how much the perfomances varies across the folds (spread). 
+        Input:
+        - Model: the pipeline used to create the model
+        - X_train
+        - y_train
+        - folds: folds createt in function split
+        Output: 
+        - prints the scores as well as the spread of the model
+        - return scores and spread"""
+    from sklearn.model_selection import cross_validate
+    from sklearn.metrics import ( precision_score, make_scorer)
+    scoring = {"f1": "f1_macro", "recall": "recall_macro", "accuracy": "accuracy","precision": make_scorer(precision_score,average="macro",zero_division=0)} 
+    cross_val = cross_validate(model, X_train, y_train, cv= folds, scoring = scoring) 
+    scores = {metric: round(cross_val[f"test_{metric}"].mean(), 3) for metric in scoring}
+    spread = {metric: round(cross_val[f"test_{metric}"].std(), 3) for metric in scoring}
+    print(f"Scores: {scores} \n Spread: {spread}")
+    return scores, spread
