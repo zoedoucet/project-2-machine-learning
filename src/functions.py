@@ -34,6 +34,11 @@ def build_preprocessor(numeric, categorical):
     pass
 
 
+def create_pipeline(preprocessor, model):
+    from sklearn.pipeline import make_pipeline
+    return make_pipeline(preprocessor, model)
+
+
 def compare_models(models, X, y, cv, scoring):
     """Cross-validate each model on the same folds and return a tidy table."""
     pass
@@ -149,3 +154,43 @@ def compare_models(models):
             row[f"{metric}_spread"] = spread[metric]
         rows.append(row)
     return pd.DataFrame(rows)
+
+
+def cross_validation_chart(metrics, compare_models):
+    """Creats charts for the scores of the models from compare_models function.
+     Input:
+      - metrics: a dictionnary with the names of the scores used, corresponding to the names in compare_models
+      - compare_models: output of the function compare_models
+     Ouput:
+      - One bar chart per metric """
+    import matplotlib.pyplot as plt
+    import math
+    results_plot = compare_models.sort_values("f1", ascending=True)
+
+    n_cols = 2
+    n_rows = math.ceil(len(metrics) / n_cols)
+
+    fig, axes = plt.subplots(n_rows, n_cols,figsize=(12, 4 * n_rows),squeeze=False)
+
+    models = results_plot["Model"].tolist()
+    palette = ["#0072B2","#E69F00","#009E73","#D55E00","#CC79A7","#56B4E9","#F0E442","#000000"]
+    colors = [palette[i % len(palette)]for i in range(len(models))]
+
+    for i, (score_col, spread_col, title) in enumerate(metrics):
+        ax = axes[i // n_cols, i % n_cols]
+
+        scores = results_plot[score_col].tolist()
+        spreads = results_plot[spread_col].tolist()
+
+        ax.bar(models,scores,color=colors,yerr=spreads,capsize=4)
+        ax.set_title(f"{title} Comparison")
+        ax.set_ylabel(title)
+        ax.set_ylim(0, 1)
+        ax.tick_params(axis="x", rotation=30)
+
+    # Hide unused axes if the number of metrics is odd
+    for i in range(len(metrics), n_rows * n_cols):
+        axes[i // n_cols, i % n_cols].set_visible(False)
+
+    plt.tight_layout()
+    plt.show()
