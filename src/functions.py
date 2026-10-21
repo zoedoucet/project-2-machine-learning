@@ -78,7 +78,7 @@ def convert_binary_columns(df, column_groups):
     return df
 
 
-def prepare_covertype_data(output_path="../data/raw/covertype_clean.csv"):
+def prepare_covertype_data(output_path="../data/covertype_clean.csv"):
     """Fetch, preprocess, clean and save the Covertype dataset created by Jock Blackard.
         Output:
         - cover_type_clean: cleaned datset as csv file"""
@@ -116,7 +116,7 @@ def prepare_covertype_data(output_path="../data/raw/covertype_clean.csv"):
     # Saving the processed dataset
     covertype_clean.to_csv(output_path, index=False)
     print(f"Dataset saved to {output_file}.")
-    
+
     return covertype_clean
 
 
