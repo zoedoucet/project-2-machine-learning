@@ -78,6 +78,48 @@ def convert_binary_columns(df, column_groups):
     return df
 
 
+def prepare_covertype_data(output_path="../data/raw/covertype_clean.csv"):
+    """Fetch, preprocess, clean and save the Covertype dataset created by Jock Blackard.
+        Output:
+        - cover_type_clean: cleaned datset as csv file"""
+   
+    from ucimlrepo import fetch_ucirepo
+    import pandas as pd
+    from pathlib import Path
+
+      # Checking if the file already exists
+    output_file = Path(output_path)
+
+    if output_file.exists():
+        print(f"File already exists: {output_file}. Loading existing dataset.")
+        return pd.read_csv(output_file)
+    
+    # fetch dataset 
+    covertype = fetch_ucirepo(id=31) 
+    # data (as pandas dataframes) 
+    X_c = covertype.data.features 
+    y_c = covertype.data.targets 
+
+    # concatinating the features and targets into one dataset
+    covertype_concat = pd.concat([X_c, y_c], axis=1)
+
+    # creating a dictionnary with the binary columns that will be convertet to categorical columns
+    column_groups = {"Soil_Type":[f"Soil_Type{i}" for i in range (1, 41)], # the range represetns the different classes 
+                    "Wilderness_Area":[f"Wilderness_Area{i}"for i in range(1,5)]}
+
+    # Converting binary columns into categorical columns
+    covertype_raw = convert_binary_columns(covertype_concat, column_groups)
+
+    # cleaning the dataset by standardising the column names
+    covertype_clean = column_names_std(covertype_raw)
+
+    # Saving the processed dataset
+    covertype_clean.to_csv(output_path, index=False)
+    print(f"Dataset saved to {output_file}.")
+    
+    return covertype_clean
+
+
 def column_names_std(df):
     """Standardises column names using snake_case
         - removing leading and trailing spces
