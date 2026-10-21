@@ -2,6 +2,7 @@
 data*
 !data/raw/.gitkeep
 !data/README.md
+Gradio App/data
 
 # Models are build artefacts: notebook 03 recreates them.
 models/*
@@ -35,4 +36,5 @@ notebooks/00_notes_and_ideas.ipynb
 
 # presentation
 presentation/*/
+
 
