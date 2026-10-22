@@ -37,4 +37,7 @@ notebooks/00_notes_and_ideas.ipynb
 # presentation
 presentation/*/
 
+# Gradio
+Gradio_App/*/
+
 

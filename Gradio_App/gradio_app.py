@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent
 BASE_DIR = Path(__file__).resolve().parent
 MODEL_PATH = BASE_DIR.parent / "models" / "covertype_model.joblib"
 
-saved = joblib.load("../notebooks/covertype_model.joblib")
+saved = joblib.load("../models/covertype_model.joblib")
 
 # Load the input samples
 BASE_DIR = Path(__file__).resolve().parent
